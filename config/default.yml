@@ -1841,6 +1841,11 @@ Metrics/PerceivedComplexity:
 
 #################### Naming ##############################
 
+Metrics/PerceivedMethodLength:
+  Description: 'TODO: Write a description of the cop.'
+  Enabled: true
+  VersionAdded: '0.72'
+
 Naming/AccessorMethodName:
   Description: Check the naming of accessor methods for get_/set_.
   StyleGuide: '#accessor_mutator_method_names'
