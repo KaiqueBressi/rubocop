@@ -14,7 +14,7 @@ module RuboCop
         def on_def(node)
           @statements = 0
 
-          return unless count_statements(node) > max_statements
+          return unless count_statements(extract_body(node)) > max_statements
 
           add_offense(node, location: :name, message: message(@statements, max_statements))
         end

@@ -9,7 +9,7 @@ RSpec.describe RuboCop::Cop::Metrics::PerceivedMethodLength, :config do
     it 'registers an offense' do
       expect_offense(<<~RUBY)
         def m
-            ^ Method has too many statements. [3/1]
+            ^ Method has too many statements. [2/1]
            if a
               [
                  1,
