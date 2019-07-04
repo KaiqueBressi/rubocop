@@ -30,7 +30,7 @@ module RuboCop
         end
 
         def count_statements(node)
-          return unless node
+          return 0 unless node
 
           if compound_statement?(node)
             node.node_parts.each(&method(:count))
