@@ -13,6 +13,7 @@ module RuboCop
 
         def on_def(node)
           @statements = 0
+          require 'pry'; binding.pry
 
           return unless count_statements(extract_body(node)) > max_statements
 
@@ -44,10 +45,12 @@ module RuboCop
         def count(node)
           if has_body?(node)
             @statements += 1
+            puts node.type
 
             count_statements(extract_body(node))
           else
             @statements += 1
+            puts node.type
           end
         end
 
