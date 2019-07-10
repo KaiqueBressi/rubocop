@@ -430,6 +430,182 @@ RSpec.describe RuboCop::Cop::Layout::RescueEnsureAlignment, :config do
         RUBY
       end
     end
+
+    context 'rescue in do-end block assigned to local variable' do
+      it 'registers an offense' do
+        expect_offense(<<~RUBY)
+          result = [1, 2, 3].map do |el|
+            rescue StandardError => _exception
+            ^^^^^^ `rescue` at 2, 2 is not aligned with `result` at 1, 0.
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          result = [1, 2, 3].map do |el|
+          rescue StandardError => _exception
+          end
+        RUBY
+      end
+    end
+
+    context 'rescue in do-end block assigned to instance variable' do
+      it 'registers an offense' do
+        expect_offense(<<~RUBY)
+          @instance = [1, 2, 3].map do |el|
+            rescue StandardError => _exception
+            ^^^^^^ `rescue` at 2, 2 is not aligned with `@instance` at 1, 0.
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          @instance = [1, 2, 3].map do |el|
+          rescue StandardError => _exception
+          end
+        RUBY
+      end
+    end
+
+    context 'rescue in do-end block assigned to class variable' do
+      it 'registers an offense' do
+        expect_offense(<<~RUBY)
+          @@class = [].map do |_|
+            rescue StandardError => _
+            ^^^^^^ `rescue` at 2, 2 is not aligned with `@@class` at 1, 0.
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          @@class = [].map do |_|
+          rescue StandardError => _
+          end
+        RUBY
+      end
+    end
+
+    context 'rescue in do-end block assigned to global variable' do
+      it 'registers an offense' do
+        expect_offense(<<~RUBY)
+          $global = [].map do |_|
+            rescue StandardError => _
+            ^^^^^^ `rescue` at 2, 2 is not aligned with `$global` at 1, 0.
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          $global = [].map do |_|
+          rescue StandardError => _
+          end
+        RUBY
+      end
+    end
+
+    context 'rescue in do-end block assigned to class' do
+      it 'registers an offense' do
+        expect_offense(<<~RUBY)
+          CLASS = [].map do |_|
+            rescue StandardError => _
+            ^^^^^^ `rescue` at 2, 2 is not aligned with `CLASS` at 1, 0.
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          CLASS = [].map do |_|
+          rescue StandardError => _
+          end
+        RUBY
+      end
+    end
+
+    context 'rescue in do-end block on multi-assignment' do
+      it 'registers an offense' do
+        expect_offense(<<~RUBY)
+          a, b = [].map do |_|
+            rescue StandardError => _
+            ^^^^^^ `rescue` at 2, 2 is not aligned with `a, b` at 1, 0.
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          a, b = [].map do |_|
+          rescue StandardError => _
+          end
+        RUBY
+      end
+    end
+
+    context 'rescue in do-end block on operation assignment' do
+      it 'registers an offense' do
+        expect_offense(<<~RUBY)
+          a += [].map do |_|
+            rescue StandardError => _
+            ^^^^^^ `rescue` at 2, 2 is not aligned with `a` at 1, 0.
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          a += [].map do |_|
+          rescue StandardError => _
+          end
+        RUBY
+      end
+    end
+
+    context 'rescue in do-end block on and-assignment' do
+      it 'registers an offense' do
+        expect_offense(<<~RUBY)
+          a &&= [].map do |_|
+            rescue StandardError => _
+            ^^^^^^ `rescue` at 2, 2 is not aligned with `a` at 1, 0.
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          a &&= [].map do |_|
+          rescue StandardError => _
+          end
+        RUBY
+      end
+    end
+
+    context 'rescue in do-end block on or-assignment' do
+      it 'registers an offense' do
+        expect_offense(<<~RUBY)
+          a ||= [].map do |_|
+            rescue StandardError => _
+            ^^^^^^ `rescue` at 2, 2 is not aligned with `a` at 1, 0.
+          end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          a ||= [].map do |_|
+          rescue StandardError => _
+          end
+        RUBY
+      end
+    end
+
+    context 'rescue in assigned do-end block starting on newline' do
+      it 'registers an offense' do
+        expect_offense(<<~RUBY)
+          valid =
+            proc do |bar|
+              baz
+              rescue
+              ^^^^^^ `rescue` at 4, 4 is not aligned with `proc do` at 2, 2.
+              qux
+            end
+        RUBY
+
+        expect_correction(<<~RUBY)
+          valid =
+            proc do |bar|
+              baz
+            rescue
+              qux
+            end
+        RUBY
+      end
+    end
   end
 
   describe 'excluded file' do
@@ -460,128 +636,142 @@ RSpec.describe RuboCop::Cop::Layout::RescueEnsureAlignment, :config do
       }
     end
 
-    context 'rescue with def' do
-      it 'registers an offense' do
-        expect_offense(<<~RUBY)
-          private def test
-            'foo'
+    shared_examples 'access modifier' do |modifier|
+      context 'rescue with def' do
+        it 'registers an offense' do
+          expect_offense(<<~RUBY)
+            #{modifier} def test
+              'foo'
+              rescue
+              ^^^^^^ `rescue` at 3, 2 is not aligned with `#{modifier} def test` at 1, 0.
+              'baz'
+            end
+          RUBY
+
+          expect_correction(<<~RUBY)
+            #{modifier} def test
+              'foo'
             rescue
-            ^^^^^^ `rescue` at 3, 2 is not aligned with `private def test` at 1, 0.
-            'baz'
-          end
-        RUBY
+              'baz'
+            end
+          RUBY
+        end
 
-        expect_correction(<<~RUBY)
-          private def test
-            'foo'
-          rescue
-            'baz'
-          end
-        RUBY
-      end
-
-      it 'correct alignment' do
-        expect_no_offenses(<<~RUBY)
-          private def test
-            'foo'
-          rescue
-            'baz'
-          end
-        RUBY
-      end
-    end
-
-    context 'rescue with defs' do
-      it 'registers an offense' do
-        expect_offense(<<~RUBY)
-          private def Test.test
-            'foo'
+        it 'correct alignment' do
+          expect_no_offenses(<<~RUBY)
+            #{modifier} def test
+              'foo'
             rescue
-            ^^^^^^ `rescue` at 3, 2 is not aligned with `private def Test.test` at 1, 0.
-            'baz'
-          end
-        RUBY
-
-        expect_correction(<<~RUBY)
-          private def Test.test
-            'foo'
-          rescue
-            'baz'
-          end
-        RUBY
+              'baz'
+            end
+          RUBY
+        end
       end
 
-      it 'correct alignment' do
-        expect_no_offenses(<<~RUBY)
-          private def Test.test
-            'foo'
-          rescue
-            'baz'
-          end
-        RUBY
+      context 'rescue with defs' do
+        it 'registers an offense' do
+          expect_offense(<<~RUBY)
+            #{modifier} def Test.test
+              'foo'
+              rescue
+              ^^^^^^ `rescue` at 3, 2 is not aligned with `#{modifier} def Test.test` at 1, 0.
+              'baz'
+            end
+          RUBY
+
+          expect_correction(<<~RUBY)
+            #{modifier} def Test.test
+              'foo'
+            rescue
+              'baz'
+            end
+          RUBY
+        end
+
+        it 'correct alignment' do
+          expect_no_offenses(<<~RUBY)
+            #{modifier} def Test.test
+              'foo'
+            rescue
+              'baz'
+            end
+          RUBY
+        end
+      end
+
+      context 'ensure with def' do
+        it 'registers an offense' do
+          expect_offense(<<~RUBY)
+            #{modifier} def test
+              'foo'
+              ensure
+              ^^^^^^ `ensure` at 3, 2 is not aligned with `#{modifier} def test` at 1, 0.
+              'baz'
+            end
+          RUBY
+
+          expect_correction(<<~RUBY)
+            #{modifier} def test
+              'foo'
+            ensure
+              'baz'
+            end
+          RUBY
+        end
+
+        it 'correct alignment' do
+          expect_no_offenses(<<~RUBY)
+            #{modifier} def test
+              'foo'
+            ensure
+              'baz'
+            end
+          RUBY
+        end
+      end
+
+      context 'ensure with defs' do
+        it 'registers an offense' do
+          expect_offense(<<~RUBY)
+            #{modifier} def Test.test
+              'foo'
+              ensure
+              ^^^^^^ `ensure` at 3, 2 is not aligned with `#{modifier} def Test.test` at 1, 0.
+              'baz'
+            end
+          RUBY
+
+          expect_correction(<<~RUBY)
+            #{modifier} def Test.test
+              'foo'
+            ensure
+              'baz'
+            end
+          RUBY
+        end
+
+        it 'correct alignment' do
+          expect_no_offenses(<<~RUBY)
+            #{modifier} def Test.test
+              'foo'
+            ensure
+              'baz'
+            end
+          RUBY
+        end
       end
     end
 
-    context 'ensure with def' do
-      it 'registers an offense' do
-        expect_offense(<<~RUBY)
-          private def test
-            'foo'
-            ensure
-            ^^^^^^ `ensure` at 3, 2 is not aligned with `private def test` at 1, 0.
-            'baz'
-          end
-        RUBY
-
-        expect_correction(<<~RUBY)
-          private def test
-            'foo'
-          ensure
-            'baz'
-          end
-        RUBY
-      end
-
-      it 'correct alignment' do
-        expect_no_offenses(<<~RUBY)
-          private def test
-            'foo'
-          ensure
-            'baz'
-          end
-        RUBY
-      end
+    context 'with private modifier' do
+      include_examples 'access modifier', 'private'
     end
 
-    context 'ensure with defs' do
-      it 'registers an offense' do
-        expect_offense(<<~RUBY)
-          private def Test.test
-            'foo'
-            ensure
-            ^^^^^^ `ensure` at 3, 2 is not aligned with `private def Test.test` at 1, 0.
-            'baz'
-          end
-        RUBY
+    context 'with private_class_method modifier' do
+      include_examples 'access modifier', 'private_class_method'
+    end
 
-        expect_correction(<<~RUBY)
-          private def Test.test
-            'foo'
-          ensure
-            'baz'
-          end
-        RUBY
-      end
-
-      it 'correct alignment' do
-        expect_no_offenses(<<~RUBY)
-          private def Test.test
-            'foo'
-          ensure
-            'baz'
-          end
-        RUBY
-      end
+    context 'with public_class_method modifier' do
+      include_examples 'access modifier', 'public_class_method'
     end
   end
 

@@ -105,7 +105,7 @@ EnforcedStyle | `prefer_alias` | `prefer_alias`, `prefer_alias_method`
 
 ### References
 
-* [https://rubystyle.guide#alias-method](https://rubystyle.guide#alias-method)
+* [https://rubystyle.guide#alias-method-lexically](https://rubystyle.guide#alias-method-lexically)
 
 ## Style/AndOr
 
@@ -1958,6 +1958,71 @@ Pathname.new(__FILE__).parent.expand_path
 Pathname.new(__dir__).expand_path
 ```
 
+## Style/FloatDivision
+
+Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
+--- | --- | --- | --- | ---
+Enabled | Yes | No | 0.72 | -
+
+This cop checks for division with integers coerced to floats.
+It is recommended to either always use `fdiv` or coerce one side only.
+This cop also provides other options for code consistency.
+
+### Examples
+
+#### EnforcedStyle: single_coerce (default)
+
+```ruby
+# bad
+a.to_f / b.to_f
+
+# good
+a.to_f / b
+a / b.to_f
+```
+#### EnforcedStyle: left_coerce
+
+```ruby
+# bad
+a / b.to_f
+a.to_f / b.to_f
+
+# good
+a.to_f / b
+```
+#### EnforcedStyle: right_coerce
+
+```ruby
+# bad
+a.to_f / b
+a.to_f / b.to_f
+
+# good
+a / b.to_f
+```
+#### EnforcedStyle: fdiv
+
+```ruby
+# bad
+a / b.to_f
+a.to_f / b
+a.to_f / b.to_f
+
+# good
+a.fdiv(b)
+```
+
+### Configurable attributes
+
+Name | Default value | Configurable values
+--- | --- | ---
+EnforcedStyle | `single_coerce` | `left_coerce`, `right_coerce`, `single_coerce`, `fdiv`
+
+### References
+
+* [https://rubystyle.guide#float-division](https://rubystyle.guide#float-division)
+* [https://github.com/rubocop-hq/ruby-style-guide/issues/628](https://github.com/rubocop-hq/ruby-style-guide/issues/628)
+
 ## Style/For
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
@@ -2455,6 +2520,46 @@ else
   action_c
 end
 ```
+#### AllowIfModifier: false (default)
+
+```ruby
+# bad
+if condition_a
+  action_a
+else
+  action_b if condition_b
+end
+
+# good
+if condition_a
+  action_a
+elsif condition_b
+  action_b
+end
+```
+#### AllowIfModifier: true
+
+```ruby
+# good
+if condition_a
+  action_a
+else
+  action_b if condition_b
+end
+
+# good
+if condition_a
+  action_a
+elsif condition_b
+  action_b
+end
+```
+
+### Configurable attributes
+
+Name | Default value | Configurable values
+--- | --- | ---
+AllowIfModifier | `false` | Boolean
 
 ## Style/IfUnlessModifier
 
@@ -3679,6 +3784,38 @@ a =
 ### References
 
 * [https://rubystyle.guide#no-multiline-ternary](https://rubystyle.guide#no-multiline-ternary)
+
+## Style/MultilineWhenThen
+
+Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
+--- | --- | --- | --- | ---
+Enabled | Yes | Yes  | 0.72 | -
+
+This cop checks uses of the `then` keyword
+in multi-line when statements.
+
+### Examples
+
+```ruby
+# bad
+case foo
+when bar then
+end
+
+# good
+case foo
+when bar
+end
+
+# good
+case foo
+when bar then do_something
+end
+```
+
+### References
+
+* [https://rubystyle.guide#no-then](https://rubystyle.guide#no-then)
 
 ## Style/MultipleComparison
 
@@ -7046,7 +7183,7 @@ Name | Default value | Configurable values
 --- | --- | ---
 EnforcedStyle | `percent` | `percent`, `brackets`
 MinSize | `2` | Integer
-WordRegex | `(?-mix:\A[\p{Word}\n\t]+\z)` | 
+WordRegex | `(?-mix:\A(?:\p{Word}|\p{Word}-\p{Word}|\n|\t)+\z)` | 
 
 ### References
 

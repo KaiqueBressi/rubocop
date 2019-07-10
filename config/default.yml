@@ -195,6 +195,13 @@ Gemspec/RequiredRubyVersion:
   VersionAdded: '0.52'
   Include:
     - '**/*.gemspec'
+    -
+Gemspec/RubyVersionGlobalsUsage:
+  Description: Checks usage of RUBY_VERSION in gemspec.
+  Enabled: true
+  VersionAdded: '0.72'
+  Include:
+    - '**/*.gemspec'
 
 #################### Layout ###########################
 
@@ -770,7 +777,7 @@ Layout/IndentationConsistency:
   StyleGuide: '#spaces-indentation'
   Enabled: true
   VersionAdded: '0.49'
-  # The difference between `indented` and `normal` is that the `outdented_access_modifiers`
+  # The difference between `indented` and `normal` is that the `indented_internal_methods`
   # style prescribes that in classes and modules the `protected` and `private`
   # modifier keywords shall be indented the same as public methods and that
   # protected and private members shall be indented one step more than the
@@ -779,9 +786,9 @@ Layout/IndentationConsistency:
   EnforcedStyle: normal
   SupportedStyles:
     - normal
-    - outdented_access_modifiers
+    - indented_internal_methods
   Reference:
-    # A reference to `EnforcedStyle: outdented_access_modifiers`.
+    # A reference to `EnforcedStyle: indented_internal_methods`.
     - https://edgeguides.rubyonrails.org/contributing_to_ruby_on_rails.html#follow-the-coding-conventions
 
 Layout/IndentationWidth:
@@ -809,6 +816,8 @@ Layout/LeadingCommentSpace:
   StyleGuide: '#hash-space'
   Enabled: true
   VersionAdded: '0.49'
+  VersionChanged: '0.73'
+  AllowDoxygenCommentStyle: false
 
 Layout/MultilineArrayBraceLayout:
   Description: >-
@@ -2131,7 +2140,7 @@ Style/AccessModifierDeclarations:
 
 Style/Alias:
   Description: 'Use alias instead of alias_method.'
-  StyleGuide: '#alias-method'
+  StyleGuide: '#alias-method-lexically'
   Enabled: true
   VersionAdded: '0.9'
   VersionChanged: '0.36'
@@ -2648,6 +2657,19 @@ Style/ExpandPathArguments:
   Enabled: true
   VersionAdded: '0.53'
 
+Style/FloatDivision:
+  Description: 'For performing float division, coerce one side only.'
+  StyleGuide: '#float-division'
+  Reference: 'https://github.com/rubocop-hq/ruby-style-guide/issues/628'
+  Enabled: true
+  VersionAdded: '0.72'
+  EnforcedStyle: single_coerce
+  SupportedStyles:
+    - left_coerce
+    - right_coerce
+    - single_coerce
+    - fdiv
+
 Style/For:
   Description: 'Checks use of for or each in multiline loops.'
   StyleGuide: '#no-for-loops'
@@ -2756,6 +2778,7 @@ Style/IdenticalConditionalBranches:
 Style/IfInsideElse:
   Description: 'Finds if nodes inside else, which can be converted to elsif.'
   Enabled: true
+  AllowIfModifier: false
   VersionAdded: '0.36'
 
 Style/IfUnlessModifier:
@@ -3024,6 +3047,12 @@ Style/MultilineTernaryOperator:
   StyleGuide: '#no-multiline-ternary'
   Enabled: true
   VersionAdded: '0.9'
+
+Style/MultilineWhenThen:
+  Description: 'Do not use then for multi-line when statement.'
+  StyleGuide: '#no-then'
+  Enabled: true
+  VersionAdded: '0.72'
 
 Style/MultipleComparison:
   Description: >-
@@ -3858,7 +3887,7 @@ Style/WordArray:
   # whose element count is greater than or equal to `MinSize`.
   MinSize: 2
   # The regular expression `WordRegex` decides what is considered a word.
-  WordRegex: !ruby/regexp '/\A[\p{Word}\n\t]+\z/'
+  WordRegex: !ruby/regexp '/\A(?:\p{Word}|\p{Word}-\p{Word}|\n|\t)+\z/'
 
 Style/YodaCondition:
   Description: 'Forbid or enforce yoda conditions.'

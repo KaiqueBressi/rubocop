@@ -399,21 +399,21 @@ RSpec.describe RuboCop::CLI, :isolated_environment do
       end
 
       include_examples 'UnneededCopDisableDirective not run',
-                       'individually disabled', <<-YAML.strip_indent
-        Lint/UnneededCopDisableDirective:
-          Enabled: false
-      YAML
+                       'individually disabled', <<~YAML
+                         Lint/UnneededCopDisableDirective:
+                           Enabled: false
+                       YAML
       include_examples 'UnneededCopDisableDirective not run',
-                       'individually excluded', <<-YAML.strip_indent
-        Lint/UnneededCopDisableDirective:
-          Exclude:
-            - example.rb
-      YAML
+                       'individually excluded', <<~YAML
+                         Lint/UnneededCopDisableDirective:
+                           Exclude:
+                             - example.rb
+                       YAML
       include_examples 'UnneededCopDisableDirective not run',
-                       'disabled through department', <<-YAML.strip_indent
-        Lint:
-          Enabled: false
-      YAML
+                       'disabled through department', <<~YAML
+                         Lint:
+                           Enabled: false
+                       YAML
     end
   end
 
@@ -631,12 +631,12 @@ RSpec.describe RuboCop::CLI, :isolated_environment do
       end
     end
 
-    context 'when configured for outdented_access_modifiers style ' \
+    context 'when configured for indented_internal_methods style ' \
             'indentation' do
-      it 'accepts outdented_access_modifiers style indentation' do
+      it 'accepts indented_internal_methods style indentation' do
         create_file('.rubocop.yml', <<~YAML)
           Layout/IndentationConsistency:
-            EnforcedStyle: outdented_access_modifiers
+            EnforcedStyle: indented_internal_methods
           Style/FrozenStringLiteralComment:
             Enabled: false
         YAML
@@ -672,7 +672,7 @@ RSpec.describe RuboCop::CLI, :isolated_environment do
         it "registers offense for normal indentation in #{parent}" do
           create_file('.rubocop.yml', <<~YAML)
             Layout/IndentationConsistency:
-              EnforcedStyle: outdented_access_modifiers
+              EnforcedStyle: indented_internal_methods
             Style/FrozenStringLiteralComment:
               Enabled: false
           YAML
@@ -706,8 +706,8 @@ RSpec.describe RuboCop::CLI, :isolated_environment do
           expect($stdout.string)
             .to eq(<<~RESULT)
               == example.rb ==
-              C:  9:  3: Layout/IndentationWidth: Use 2 (not 0) spaces for outdented_access_modifiers indentation.
-              C: 15:  3: Layout/IndentationWidth: Use 2 (not 0) spaces for outdented_access_modifiers indentation.
+              C:  9:  3: Layout/IndentationWidth: Use 2 (not 0) spaces for indented_internal_methods indentation.
+              C: 15:  3: Layout/IndentationWidth: Use 2 (not 0) spaces for indented_internal_methods indentation.
 
               1 file inspected, 2 offenses detected
           RESULT
@@ -833,10 +833,10 @@ RSpec.describe RuboCop::CLI, :isolated_environment do
 
       expect(cli.run(%w[--format simple])).to eq(1)
       expect($stdout.string).to eq(<<~RESULT)
-        == example1.rb ==
-        C:  3:  6: Layout/TrailingWhitespace: Trailing whitespace detected.
         == dir/example2.rb ==
         C:  3:  6: Trailing whitespace detected.
+        == example1.rb ==
+        C:  3:  6: Layout/TrailingWhitespace: Trailing whitespace detected.
 
         2 files inspected, 2 offenses detected
       RESULT
@@ -859,10 +859,10 @@ RSpec.describe RuboCop::CLI, :isolated_environment do
 
       expect(cli.run(%w[--format simple])).to eq(1)
       expect($stdout.string).to eq(<<~RESULT)
-        == example1.rb ==
-        C:  3:  6: Layout/TrailingWhitespace: Trailing whitespace detected.
         == dir/example2.rb ==
         C:  3:  6: Layout/TrailingWhitespace: Trailing whitespace detected. (#{url})
+        == example1.rb ==
+        C:  3:  6: Layout/TrailingWhitespace: Trailing whitespace detected.
 
         2 files inspected, 2 offenses detected
       RESULT
@@ -1615,8 +1615,8 @@ RSpec.describe RuboCop::CLI, :isolated_environment do
             TargetRubyVersion: 2.8
         YAML
         expect(cli.run([])).to eq(2)
-        expect($stderr.string.strip).to match(
-          /\AError: Unknown Ruby version 2.8 found in `TargetRubyVersion`/
+        expect($stderr.string.strip).to start_with(
+          'Error: RuboCop found unknown Ruby version 2.8 in `TargetRubyVersion`'
         )
         expect($stderr.string.strip).to match(
           /Supported versions: 2.3, 2.4, 2.5, 2.6, 2.7/
@@ -1632,8 +1632,9 @@ RSpec.describe RuboCop::CLI, :isolated_environment do
         YAML
 
         expect(cli.run([])).to eq(2)
-        expect($stderr.string.strip).to match(
-          /\AError: Unsupported Ruby version 2.0 found in `TargetRubyVersion`/
+        expect($stderr.string.strip).to start_with(
+          'Error: RuboCop found unsupported Ruby version 2.0 in '\
+          '`TargetRubyVersion`'
         )
 
         expect($stderr.string.strip).to match(

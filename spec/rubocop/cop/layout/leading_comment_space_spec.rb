@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Cop::Layout::LeadingCommentSpace do
-  subject(:cop) { described_class.new }
+RSpec.describe RuboCop::Cop::Layout::LeadingCommentSpace, :config do
+  subject(:cop) { described_class.new(config) }
 
   it 'registers an offense for comment without leading space' do
     expect_offense(<<~RUBY)
@@ -73,6 +73,36 @@ RSpec.describe RuboCop::Cop::Layout::LeadingCommentSpace do
         #\ -w -p 8765
         ^^^^^^^^^^^^^ Missing space after `#`.
       RUBY
+    end
+  end
+
+  describe 'Doxygen style' do
+    context 'when config option is disabled' do
+      let(:cop_config) { { 'AllowDoxygenCommentStyle' => false } }
+
+      it 'registers an offense when using Doxygen style' do
+        expect_offense(<<~RUBY)
+          #**
+          ^^^ Missing space after `#`.
+          # Some comment
+          # Another comment on a second line
+          #*
+          ^^ Missing space after `#`.
+        RUBY
+      end
+    end
+
+    context 'when config option is enabled' do
+      let(:cop_config) { { 'AllowDoxygenCommentStyle' => true } }
+
+      it 'does not register offense when using Doxygen style' do
+        expect_no_offenses(<<~RUBY)
+          #**
+          # Some comment
+          # Another comment on a second line
+          #*
+        RUBY
+      end
     end
   end
 

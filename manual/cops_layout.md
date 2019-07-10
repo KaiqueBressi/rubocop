@@ -2164,8 +2164,12 @@ Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChan
 --- | --- | --- | --- | ---
 Enabled | Yes | Yes  | 0.68 | -
 
-This cop checks the indentation of the first argument in a method call
-or definition.
+This cop checks the indentation of the first argument in a method call.
+Arguments after the first one are checked by Layout/AlignArguments,
+not by this cop.
+
+For indenting the first parameter of method *definitions*, check out
+Layout/IndentFirstParameter.
 
 ### Examples
 
@@ -2517,9 +2521,13 @@ Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChan
 --- | --- | --- | --- | ---
 Enabled | Yes | Yes  | 0.49 | 0.68
 
-This cop checks the indentation of the first parameter in a method call.
-Parameters after the first one are checked by Layout/AlignParameters,
-not by this cop.
+This cop checks the indentation of the first parameter in a method
+definition. Parameters after the first one are checked by
+Layout/AlignParameters, not by this cop.
+
+For indenting the first argument of method *calls*, check out
+Layout/IndentFirstArgument, which supports options related to
+nesting that are irrelevant for method *definitions*.
 
 ### Examples
 
@@ -2646,8 +2654,8 @@ Enabled | Yes | Yes  | 0.49 | -
 
 This cop checks for inconsistent indentation.
 
-The difference between `outdented_access_modifiers` and `normal` is
-that the `outdented_access_modifiers` style prescribes that in
+The difference between `indented_internal_methods` and `normal` is
+that the `indented_internal_methods` style prescribes that in
 classes and modules the `protected` and `private` modifier keywords
 shall be indented the same as public methods and that protected and
 private members shall be indented one step more than the modifiers.
@@ -2711,7 +2719,7 @@ class A
   end
 end
 ```
-#### EnforcedStyle: outdented_access_modifiers
+#### EnforcedStyle: indented_internal_methods
 
 ```ruby
 # bad
@@ -2771,7 +2779,7 @@ end
 
 Name | Default value | Configurable values
 --- | --- | ---
-EnforcedStyle | `normal` | `normal`, `outdented_access_modifiers`
+EnforcedStyle | `normal` | `normal`, `indented_internal_methods`
 
 ### References
 
@@ -2900,7 +2908,7 @@ end
 
 Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
 --- | --- | --- | --- | ---
-Enabled | Yes | Yes  | 0.49 | -
+Enabled | Yes | Yes  | 0.49 | 0.73
 
 This cop checks whether comments have a leading space after the
 `#` denoting the start of the comment. The leading space is not
@@ -2917,6 +2925,32 @@ or rackup options.
 # good
 # Some comment
 ```
+#### AllowDoxygenCommentStyle: false (default)
+
+```ruby
+# bad
+
+#**
+# Some comment
+# Another line of comment
+#*
+```
+#### AllowDoxygenCommentStyle: true
+
+```ruby
+# good
+
+#**
+# Some comment
+# Another line of comment
+#*
+```
+
+### Configurable attributes
+
+Name | Default value | Configurable values
+--- | --- | ---
+AllowDoxygenCommentStyle | `false` | Boolean
 
 ### References
 

@@ -2,19 +2,52 @@
 
 ## master (unreleased)
 
+### New features
+
+* Add `AllowDoxygenCommentStyle` configuration on `Layout/LeadingCommentSpace`. ([@anthony-robin][])
+* [#7114](https://github.com/rubocop-hq/rubocop/pull/7114): Add `MultilineWhenThen` cop. ([@okuramasafumi][])
+
 ### Bug fixes
 
+* [#7170](https://github.com/rubocop-hq/rubocop/issues/7170): Fix a false positive for `Layout/RescueEnsureAlignment` when def line is preceded with `private_class_method`. ([@tatsuyafw][])
+* [#7186](https://github.com/rubocop-hq/rubocop/issues/7186): Fix a false positive for `Style/MixinUsage` when using inside multiline block and `if` condition is after `include`. ([@koic][])
+* [#7099](https://github.com/rubocop-hq/rubocop/issues/7099): Fix an error of `Layout/RescueEnsureAlignment` on assigned blocks. ([@tatsuyafw][])
+* [#5088](https://github.com/rubocop-hq/rubocop/issues/5088): Fix an error of `Layout/MultilineMethodCallIndentation` on method chains inside an argument. ([@buehmann][])
+
+### Changes
+
+* [#7181](https://github.com/rubocop-hq/rubocop/pull/7181): Sort analyzed file alphabetically. ([@pocke][])
+* [#7188](https://github.com/rubocop-hq/rubocop/pull/7188): Include inspected file location in auto-correction error. ([@pocke][])
+
+## 0.72.0 (2019-06-25)
+
+### New features
+
+* [#7137](https://github.com/rubocop-hq/rubocop/issues/7137): Add new `Gemspec/RubyVersionGlobalsUsage` cop. ([@malyshkosergey][])
+* [#7150](https://github.com/rubocop-hq/rubocop/pull/7150): Add `AllowIfModifier` option to `Style/IfInsideElse` cop. ([@koic][])
+* [#7153](https://github.com/rubocop-hq/rubocop/pull/7153): Add new cop `Style/FloatDivision` that checks coercion. ([@tejasbubane][])
+
+### Bug fixes
+
+* [#7121](https://github.com/rubocop-hq/rubocop/pull/7121): Fix `Style/TernaryParentheses` cop to allow safe navigation operator without parentheses. ([@timon][])
 * [#7063](https://github.com/rubocop-hq/rubocop/issues/7063): Fix autocorrect in `Style/TernaryParentheses` cop. ([@parkerfinch][])
 * [#7106](https://github.com/rubocop-hq/rubocop/issues/7106): Fix an error for `Lint/NumberConversion` when `#to_i` called on a variable on a hash. ([@koic][])
 * [#7107](https://github.com/rubocop-hq/rubocop/issues/7107): Fix parentheses offence for numeric arguments with an operator in `Style/MethodCallWithArgsParentheses`. ([@gsamokovarov][])
 * [#7119](https://github.com/rubocop-hq/rubocop/pull/7119): Fix cache with non UTF-8 offense message. ([@pocke][])
 * [#7118](https://github.com/rubocop-hq/rubocop/pull/7118): Fix `Style/WordArray` with `encoding: binary` magic comment and non-ASCII string. ([@pocke][])
-* [#7113](https://github.com/rubocop-hq/rubocop/pull/7113): This PR renames `EnforcedStyle: rails` to `EnabledStyle: outdented_access_modifiers` for `Layout/IndentationConsistency`. ([@koic][])
+* [#7159](https://github.com/rubocop-hq/rubocop/issues/7159): Fix an error for `Lint/DuplicatedKey` when using endless range. ([@koic][])
+* [#7151](https://github.com/rubocop-hq/rubocop/issues/7151): Fix `Style/WordArray` to also consider words containing hyphens. ([@fwitzke][])
+* [#6893](https://github.com/rubocop-hq/rubocop/issues/6893): Handle implicit rescue correctly in `Naming/RescuedExceptionsVariableName`. ([@pocke][], [@anthony-robin][])
+* [#7165](https://github.com/rubocop-hq/rubocop/issues/7165): Fix an auto-correct error for `Style/ConditionalAssignment` when without `else` branch'. ([@koic][])
+* [#7171](https://github.com/rubocop-hq/rubocop/issues/7171): Fix an error for `Style/SafeNavigation` when using `unless nil?` as a safeguarded'. ([@koic][])
+* [#7130](https://github.com/rubocop-hq/rubocop/pull/7130): Skip autocorrect in `Style/FormatString` if second argument to `String#%` is a variable. ([@tejasbubane][])
+* [#7171](https://github.com/rubocop-hq/rubocop/issues/7171): Fix an error for `Style/SafeNavigation` when using `unless nil?` as a safeguarded'. ([@koic][])
 
 ### Changes
 
 * [#5976](https://github.com/rubocop-hq/rubocop/issues/5976): Remove Rails cops. ([@koic][])
 * [#5976](https://github.com/rubocop-hq/rubocop/issues/5976): Remove `rubocop -R/--rails` option. ([@koic][])
+* [#7113](https://github.com/rubocop-hq/rubocop/pull/7113): Rename `EnforcedStyle: rails` to `EnabledStyle: indented_internal_methods` for `Layout/IndentationConsistency`. ([@koic][])
 
 ## 0.71.0 (2019-05-30)
 
@@ -4085,3 +4118,7 @@
 [@fwininger]: https://github.com/fwininger
 [@stoivo]: https://github.com/stoivo
 [@eugeneius]: https://github.com/eugeneius
+[@malyshkosergey]: https://github.com/malyshkosergey
+[@fwitzke]: https://github.com/fwitzke
+[@okuramasafumi]: https://github.com/okuramasafumi
+[@buehmann]: https://github.com/buehmann

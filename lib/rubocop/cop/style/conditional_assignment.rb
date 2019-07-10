@@ -223,7 +223,7 @@ module RuboCop
 
         # The shovel operator `<<` does not have its own type. It is a `send`
         # type.
-        def_node_matcher :assignment_type?, <<-PATTERN
+        def_node_matcher :assignment_type?, <<~PATTERN
           {
             #{ASSIGNMENT_TYPES.join(' ')}
             (send _recv {:[]= :<< :=~ :!~ :<=> #end_with_eq?} ...)
@@ -596,7 +596,8 @@ module RuboCop
 
             remove_whitespace_in_branches(corrector, branch, condition, column)
 
-            branch_else = branch.parent.loc.else
+            return unless (branch_else = branch.parent.loc.else)
+
             corrector.remove_preceding(branch_else, branch_else.column - column)
           end
         end
