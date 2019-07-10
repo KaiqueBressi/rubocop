@@ -1849,9 +1849,9 @@ Metrics/PerceivedComplexity:
   Max: 7
 
 Metrics/PerceivedMethodLength:
-  Description: 'Avoid methods with more than 10 statements.'
+  Description: 'Avoid methods with more than 7 statements.'
   Enabled: true
-  Max: 10
+  Max: 7
   VersionAdded: '0.72'
 
 #################### Naming ##############################
