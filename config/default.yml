@@ -1848,12 +1848,13 @@ Metrics/PerceivedComplexity:
   VersionAdded: '0.25'
   Max: 7
 
-#################### Naming ##############################
-
 Metrics/PerceivedMethodLength:
-  Description: 'TODO: Write a description of the cop.'
+  Description: 'Avoid methods with more than 10 statements.'
   Enabled: true
+  Max: 10
   VersionAdded: '0.72'
+
+#################### Naming ##############################
 
 Naming/AccessorMethodName:
   Description: Check the naming of accessor methods for get_/set_.

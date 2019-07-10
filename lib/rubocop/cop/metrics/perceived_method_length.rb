@@ -4,30 +4,36 @@
 module RuboCop
   module Cop
     module Metrics
-      # This cop checks if the number of statements of the method exceeds some maximum value.
-      # The maximum allowed statement number is configurable.
-
       class PerceivedMethodLength < Cop
-        LABEL = 'Method'
-        MSG = '%<label>s has too many statements. [%<length>d/%<max>d]'
+        MSG = 'Method has too many statements. [%<length>d/%<max>d]'
 
         def on_def(node)
+          check_code_statements(node)
+        end
+
+        def on_block(node)
+          return unless node.send_node.method_name == :define_method
+
+          check_code_statements(node)
+        end
+
+        def check_code_statements(node)
           @statements = 0
-          require 'pry'; binding.pry
+          return unless count_statements(node.body) > max_statements
 
-          return unless count_statements(extract_body(node)) > max_statements
+          location = node.casgn_type? ? :name : :expression
 
-          add_offense(node, location: :name, message: message(@statements, max_statements))
+          add_offense(node, location: location, message: message(@statements))
         end
 
         private
 
-        def message(length, max_length)
-          format(MSG, label: cop_label, length: length, max: max_length)
-        end
-
         def max_statements
           cop_config['Max']
+        end
+
+        def message(length)
+          format(MSG, length: length, max: max_statements)
         end
 
         def count_statements(node)
@@ -43,35 +49,17 @@ module RuboCop
         end
 
         def count(node)
-          if has_body?(node)
-            @statements += 1
-            puts node.type
+          @statements += 1
 
-            count_statements(extract_body(node))
-          else
-            @statements += 1
-            puts node.type
-          end
+          count_statements(node.body) if has_body?(node)
         end
 
         def compound_statement?(node)
           node.type == :begin || node.type == :kwbegin
         end
 
-        def extract_body(node)
-          if has_body?(node)
-            node.body
-          else
-            node
-          end
-        end
-
         def has_body?(node)
           node.respond_to?(:body)
-        end
-
-        def cop_label
-          LABEL
         end
       end
     end
